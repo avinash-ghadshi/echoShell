@@ -21,6 +21,7 @@ import (
 
 	"github.com/avinash-ghadshi/echoShell/cmd/net"
 	"github.com/avinash-ghadshi/echoShell/cmd/service"
+	"github.com/avinash-ghadshi/echoShell/cmd/system"
 	"github.com/spf13/cobra"
 )
 
@@ -56,6 +57,10 @@ func serviceSubCommand() {
 	rootCmd.AddCommand(service.ServiceCmd)
 }
 
+func systemSubCommand() {
+	rootCmd.AddCommand(system.SystemCmd)
+}
+
 func init() {
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
@@ -69,4 +74,5 @@ func init() {
 
 	netSubCommand()
 	serviceSubCommand()
+	systemSubCommand()
 }

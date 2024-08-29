@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 AVINASH GHADSHI <avinashghadshi.official@gmail.com>
 */
 package net
 
@@ -45,7 +45,7 @@ func pingHost() {
 		return
 	}
 
-	conn, err := icmp.ListenPacket("ipv4:icmp", "0.0.0.0")
+	conn, err := icmp.ListenPacket("ip4:icmp", "")
 	if err != nil {
 		fmt.Printf("Error creating ICMP connection: %v\n", err)
 		return
@@ -106,9 +106,8 @@ func receiveEchoReply(conn *icmp.PacketConn, start time.Time, addr *net.IPAddr) 
 	case ipv4.ICMPTypeEchoReply:
 		fmt.Printf("Reply from %s: time=%v\n", addr.String(), duration)
 	default:
-		fmt.Printf("Got %+v from %v; expected echo reply\n", rm, addr)
+		fmt.Printf("Reply from %s: %s\n", addr, rm.Type)
 	}
-
 }
 
 func init() {
@@ -119,13 +118,4 @@ func init() {
 	}
 	pingCmd.Flags().IntVarP(&count, "count", "c", 5, "Stop after sending the specified number of requests")
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// pingCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// pingCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
