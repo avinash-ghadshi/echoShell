@@ -4,6 +4,7 @@ Copyright © 2024 AVINASH GHADSHI <avinashghadshi.official@gmail.com>
 package service
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"os"
@@ -61,8 +62,71 @@ func getService(sn string) {
 		fmt.Printf("Error retrieving configuration file path for service '%s'\n", sn)
 		return
 	}
+	fmt.Printf("Service file for service '%s':\n", sn)
+	fmt.Println("--------------------------------")
 	fmt.Println(aOutput[1])
+	fmt.Println("--------------------------------")
+}
 
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
+
+func readFile(filename string) (string, error) {
+	file, err := os.Open(filename)
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	var content string
+	for scanner.Scan() {
+		content += scanner.Text() + "\n"
+	}
+
+	if err := scanner.Err(); err != nil {
+		return "", err
+	}
+	return content, nil
+}
+
+func getOS() string {
+	if fileExists("/etc/lsb-release") {
+		content, err := readFile("/etc/lsb-release")
+		if err == nil && strings.Contains(content, "Ubuntu") {
+			return "Ubuntu"
+		}
+	}
+
+	if fileExists("/etc/redhat-release") {
+		content, err := readFile("/etc/redhat-release")
+		if err == nil && strings.Contains(content, "CentOS") {
+			return "CentOS"
+		}
+	}
+
+	return "Unknown"
+}
+
+func getLibraries(sn string) ([]byte, error) {
+	os := getOS()
+	switch os {
+	case "Ubuntu":
+		cmd := exec.Command("dpkg", "-L", sn)
+		return cmd.CombinedOutput()
+
+	case "CentOS":
+		cmd := exec.Command("rpm", "-qc", sn)
+		return cmd.CombinedOutput()
+
+	default:
+		return nil, fmt.Errorf("unsupported OS: %s", os)
+	}
 }
 
 func init() {
@@ -73,6 +137,6 @@ func init() {
 	ServiceCmd.AddCommand(stopCmd)
 	ServiceCmd.AddCommand(maskCmd)
 	ServiceCmd.AddCommand(unmaskCmd)
-	//ServiceCmd.AddCommand(getconfCmd) TODO: Need to implement logic for getconf
+	ServiceCmd.AddCommand(getconfCmd)
 	ServiceCmd.AddCommand(getservicefileCmd)
 }

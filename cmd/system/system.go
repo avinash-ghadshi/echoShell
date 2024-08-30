@@ -1,5 +1,5 @@
 /*
-Copyright © 2024 NAME HERE <EMAIL ADDRESS>
+Copyright © 2024 AVINASH GHADSHI <avinashghadshi.official@gmail.com>
 */
 package system
 
@@ -31,13 +31,19 @@ var SystemCmd = &cobra.Command{
 func finddir(name, path string) {
 	cmd := exec.Command("find", path, "-type", "d", "-iname", "*"+name+"*")
 	output, _ := cmd.CombinedOutput()
+	fmt.Println("Your Search Results: ")
+	fmt.Println("--------------------------------")
 	fmt.Println(string(output))
+	fmt.Println("--------------------------------")
 }
 
 func findfile(name, path string) {
 	cmd := exec.Command("find", path, "-type", "f", "-iname", "*"+name+"*")
 	output, _ := cmd.CombinedOutput()
+	fmt.Println("Your Search Results: ")
+	fmt.Println("--------------------------------")
 	fmt.Println(string(output))
+	fmt.Println("--------------------------------")
 }
 
 func init() {
